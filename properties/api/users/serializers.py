@@ -1,0 +1,85 @@
+from rest_framework import serializers
+from .models import Profile, User
+
+
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField(required=False)
+
+
+
+    class Meta:
+        model = Profile
+        fields = ('bio', 'photo', 'address', 'id', 'user')
+        extra_kwargs = {'user': {'read_only': True}}  
+        
+
+
+class UserSerializer(serializers.ModelSerializer):
+    #url = serializers.HyperlinkedRelatedField(view_name='user-detail')
+   # url = serializers.HyperlinkedIdentityField(view_name="user")
+    password2 = serializers.CharField(label='Confirm Password', write_only=True)
+    profile = ProfileSerializer()
+
+
+
+
+    class Meta:
+            model = User
+            fields = ('password', 'password2','first_name', 'last_name', 'email', 'phone_number', 'type', 'id', 'profile',)
+            extra_kwargs = {'password': {'write_only': True}, 'password2': {'write_only': True}, }  
+
+    def validate(self, data):
+        password = data.get('password')
+        password2 = data.pop('password2')
+        if password != password2:
+            raise serializers.ValidationError("Password does not match!")       
+        if len(password) < 6:
+            raise serializers.ValidationError("Password must be at least 6 characters")
+        return data
+
+    #def validate_email(self, value):
+     #   if User.objects.filter(email=value).exists():
+      #      raise serializers.ValidationError("This email already exists!.")
+       # return value
+   
+    def create(self, validated_data):
+        # call create_user on user object. Without this
+        # the password will be stored in plain text.
+        try:
+            profile_data = validated_data.pop('profile')
+        except KeyError:
+            profile_data = {}
+
+        user = User.objects.create_user(**validated_data)
+        for key, value in profile_data.items():
+            setattr(user.profile, key, value)
+
+        #user.save()
+        return user
+
+
+
+    def update(self, instance, validated_data, uuid=None):
+
+            instance.first_name = validated_data.get('first_name', instance.first_name)
+            instance.last_name = validated_data.get('last_name', instance.last_name)
+            instance.email = validated_data.get('email', instance.email)
+            instance.phone_number = validated_data.get('phone_number', instance.phone_number)
+            instance.type = validated_data.get('type', instance.type)
+
+            instance.save()
+
+            profile_data = validated_data.pop('profile')
+            #print(profile_data)
+
+            profile = Profile.objects.get(user=instance) # this will crash if the id is invalid though
+            profile.bio = profile_data.get('bio', profile.bio)
+            profile.photo = profile_data.get('photo', profile.photo)
+            profile.address = profile_data.get('address', profile.address)
+            profile.save()
+
+            return instance
+
+
