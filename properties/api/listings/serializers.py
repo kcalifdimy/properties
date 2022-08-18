@@ -5,19 +5,8 @@ from properties.api.users.models import User
 
 
 
-class ListingSeralizer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(
-        view_name='listing-detail',
-        lookup_field='slug',
-    )
-
-    lister = serializers.HyperlinkedRelatedField(
-        lookup_field='id',
-        view_name='user-detail',
-        read_only=True,
-        #queryset=User.objects.all()
-    
-    )
+class ListingSerializer(serializers.ModelSerializer):
+   
 
     def create(self, validated_data):
         user = None
@@ -33,6 +22,7 @@ class ListingSeralizer(serializers.ModelSerializer):
     class Meta:
         model = Listing
         fields = (
+                    'id',
                     'title',
                     'address',
                     'city',
@@ -45,5 +35,4 @@ class ListingSeralizer(serializers.ModelSerializer):
                     'sqft', 
                     'slug',
                     'lister',
-                    'url',
                  )

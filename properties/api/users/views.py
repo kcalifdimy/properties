@@ -5,6 +5,9 @@ from rest_framework import viewsets
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, RetrieveUpdateAPIView, ListCreateAPIView
 from rest_framework import permissions
 from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.reverse import reverse
+
 from django.http import Http404
 
 from properties.api.users.serializers import ( 
@@ -14,6 +17,7 @@ from properties.api.users.serializers import (
                                                 )
 from properties.api.users.models import  User, Profile
 from properties.api.users.permissions import IsOwnerOrReadOnly
+
 
 
 
