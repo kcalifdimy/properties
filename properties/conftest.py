@@ -1,4 +1,6 @@
 import pytest
+from rest_framework.test import APIClient
+
 
 from properties.api.users.models import User, Profile
 from properties.api.users.tests.factories import UserFactory, ProfileFactory
@@ -18,3 +20,10 @@ def user() -> User:
 @pytest.fixture
 def profile() -> Profile:
     return ProfileFactory()
+
+
+
+@pytest.fixture()
+def client():
+    yield APIClient()
+

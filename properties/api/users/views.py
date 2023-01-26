@@ -2,17 +2,19 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, RetrieveUpdateAPIView, ListCreateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, RetrieveUpdateAPIView, ListCreateAPIView,RetrieveUpdateDestroyAPIView
 from rest_framework import permissions
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.reverse import reverse
+from rest_framework.parsers import MultiPartParser, FormParser
+
 
 from django.http import Http404
 
 from properties.api.users.serializers import ( 
                                                 UserSerializer, 
-                                                #ProfileSerializer,
+                                                ProfileSerializer,
                                                # UserUpdateSerializer
                                                 )
 from properties.api.users.models import  User, Profile
@@ -24,6 +26,7 @@ from properties.api.users.permissions import IsOwnerOrReadOnly
 class SignupView(CreateAPIView):
     permission_classes = (permissions.AllowAny, )
     serializer_class = UserSerializer
+    #parser_classes = [MultiPartParser, FormParser]
 
     
     def post(self, request):
@@ -60,10 +63,12 @@ class UserRetrieveView(RetrieveAPIView):
         return User.objects.get(id=self.kwargs.get("uuid"))
 
 
-class UpdateUserView(RetrieveUpdateAPIView):
+class UpdateUserView(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     permission_classes = (permissions.AllowAny, )
-    serializer_class = UserSerializer
+    serializer_class = ProfileSerializer
+    parser_classes = [MultiPartParser, FormParser]
+
 
     def get_object(self):
         return User.objects.get(id=self.kwargs.get("uuid"))

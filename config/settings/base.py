@@ -76,6 +76,9 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "properties.api.users.apps.UsersConfig",
     "properties.api.listings.apps.ListingsConfig",
+    "properties.api.comments.apps.CommentsConfig",
+    "properties.api.contacts.apps.ContactsConfig",
+
 
     # Your stuff: custom apps go here
 ]
@@ -263,10 +266,34 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication'
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 3
+    'PAGE_SIZE': 10
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
 
 
 FILE_UPLOAD_PERMISSIONS=0o640
+
+
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.vinexbank.com'
+EMAIL_USE_TLS = False
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'contact-vinexbank@vinexbank.com'
+EMAIL_HOST_PASSWORD = 'moving@2021'
+#EMAIL_USE_SSL = True
+
+
+RECIPIENT_ADDRESS = 'kcalifikz@gmail.com'
+
+
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_HOST = 'smtp.gmail.com'
+#EMAIL_PORT = 587
+#EMAIL_HOST_USER = 'kcalifikz@gmail.com'
+#EMAIL_HOST_PASSWORD = 'lcwbksjarusmaosy'
+#EMAIL_USE_TLS = True
+
+

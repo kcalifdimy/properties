@@ -3,6 +3,9 @@ from django.urls import include, path
 urlpatterns = [
     path('accounts/', include('properties.api.users.urls', namespace="users")),
     path('listings/', include('properties.api.listings.urls', namespace="listings")),
+    path('contacts/', include('properties.api.contacts.urls', namespace="contacts")),
+
+
 
 
 

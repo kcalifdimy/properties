@@ -1,6 +1,3 @@
-
-
-
 from django.contrib import admin
 from properties.api.users.models import User, Profile
 from django.utils.translation import gettext_lazy as _
@@ -48,7 +45,6 @@ admin.site.register(User, MyUserAdmin)
 
 
 
-
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'bio', 'photo', 'address')
     list_editable = ('bio', 'photo', 'address')
@@ -62,3 +58,5 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Profile, UserProfileAdmin)
+
+

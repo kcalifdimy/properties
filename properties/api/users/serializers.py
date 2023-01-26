@@ -25,41 +25,36 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 
+    def validate(self, data):
+        password2 = data.pop('password2')
+        password = data.get('password')
+        if password != password2:
+            raise serializers.ValidationError("Password does not match!")       
+        if len(password) < 6:
+           raise serializers.ValidationError("Password must be at least 6 characters")
+        return data
+
+
+
+    def create(self, validated_data):
+        profile_data = validated_data.pop('profile')
+        user = User.objects.create_user(**validated_data)
+        Profile.objects.create(user=user, **profile_data)
+        return user
+
+
     class Meta:
             model = User
             fields = ('password', 'password2','first_name', 'last_name', 'email', 'phone_number', 'type', 'id', 'profile',)
             extra_kwargs = {'password': {'write_only': True}, 'password2': {'write_only': True}, }  
 
-    def validate(self, data):
-        password = data.get('password')
-        password2 = data.pop('password2')
-        if password != password2:
-            raise serializers.ValidationError("Password does not match!")       
-        if len(password) < 6:
-            raise serializers.ValidationError("Password must be at least 6 characters")
-        return data
-
-    #def validate_email(self, value):
-     #   if User.objects.filter(email=value).exists():
-      #      raise serializers.ValidationError("This email already exists!.")
-       # return value
-   
-    def create(self, validated_data):
-        # call create_user on user object. Without this
-        # the password will be stored in plain text.
-        try:
-            profile_data = validated_data.pop('profile')
-        except KeyError:
-            profile_data = {}
-
-        user = User.objects.create_user(**validated_data)
-        for key, value in profile_data.items():
-            setattr(user.profile, key, value)
-
-        #user.save()
-        return user
 
 
+
+class ProfileSerializer(serializers.ModelSerializer):
+    #url = serializers.HyperlinkedRelatedField(view_name='user-detail')
+   # url = serializers.HyperlinkedIdentityField(view_name="user")
+    profile = ProfileSerializer()
 
     def update(self, instance, validated_data, uuid=None):
 
@@ -81,5 +76,10 @@ class UserSerializer(serializers.ModelSerializer):
             profile.save()
 
             return instance
+
+
+    class Meta:
+            model = User
+            fields = ('first_name', 'last_name', 'email', 'phone_number', 'type', 'id', 'profile',)
 
 
